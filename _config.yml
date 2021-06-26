@@ -2,7 +2,7 @@ title: RandomByte's Security Journey
 description: A personal journey into cybersecurity
 show_downloads: true
 google_analytics:
-remote_theme: "dracula/gh-pages"
+#remote_theme: "dracula/gh-pages"
 show_header: true
 blog: /posts/
 github:
