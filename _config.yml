@@ -1,0 +1,15 @@
+title: RandomByte's Security Journey
+description: A personal journey into cybersecurity
+show_downloads: true
+google_analytics:
+remote_theme: "dracula/gh-pages"
+show_header: true
+blog: /posts/
+github:
+    owner_url: https://github.com/macagr
+    owner_name: RandomByte
+social:
+    github: https://github.com/macagr
+    twitter: https://twitter.com/ACyberPotato
+sass:
+    style: compressed
