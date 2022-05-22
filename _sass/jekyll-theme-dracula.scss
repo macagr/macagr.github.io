@@ -363,15 +363,17 @@ section {
 
 @media print, screen and (max-width: 480px) {
   #header {
-    margin-top: -20px;
+    margin-top: -5px;
+    margin-bottom: -10px;
   }
 
+  #footer {
+    display: none;
+  }
+  
+  
   section {
     margin-top: 40px;
-  }
-
-  nav {
-    display: none;
   }
 
   .listings-category {
