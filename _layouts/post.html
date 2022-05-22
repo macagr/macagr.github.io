@@ -21,7 +21,7 @@
       {% if site.show_header %}
         <div id="header">
           <nav>
-            <li class="fork"><a href="../">Home</a></li>
+            <li class="fork"><a href="../posts">Posts</a></li>
             {% if site.show_downloads %}
               <li class="downloads"><a href="{{ site.social.twitter }}">Twitter</a></li>
               <li class="downloads"><a href="{{ site.social.github }}">Github</a></li>
@@ -37,7 +37,7 @@
           {% if page.icon %}
             <img src="{{ page.icon | relative_url }}" />
           {% endif %}
-          <h1>{{ page.title }}</h1>
+          <h1 style="line-height:1">{{ page.title }}</h1>
           <hr>
           <p>{{ page.date | date_to_string }} - {{ page.author }}</p>
         </div>
