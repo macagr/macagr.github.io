@@ -91,7 +91,7 @@ I have only changed the executed command to `printenv`, which allow us to print 
 
 <p align="center"> <img src="/assets/images/Hack1.png"> </p>
 
-The first thing to notice is all the AWS information (e.g., region, default region, etc). This tells us that I am in an AWS cloud, and that we are in an ECS container. From this, it is clear that I am after the `$AWS_CONTAINER_RELATIVE_URI` environment variable. Having this, I can then do a simple cURL request: 
+The first thing to notice is all the AWS information (e.g., region, default region, etc). This tells us that I am in an AWS cloud, and that this is an ECS container. From this, it is clear that I am after the `$AWS_CONTAINER_RELATIVE_URI` environment variable. Having this, I can then do a simple cURL request: 
 
 ```curl http://169.254.170.2/v2/credentials/821940c1-69e9-4a50-a118-04b8fafe761d```
 
@@ -181,7 +181,7 @@ Above, I am using a ProcessBuilder object to create a cURL call that adds the re
 ${dwf.newInstance(curl,null).getMetadataCredentialsARM()}
 ``` 
 
-Above, the payload first creates an object from the `classLoader` class from `ProtectionDomain`. Then, a list of class URLs is obtained and a tampered list is created by adding the URL to our JAR file which is in a blob storage. I then create a new `classLoader` using the tampered URL list and proceed to load the `JavaCurl` class which will then be used to call the `getMetadataCredentialsARM()` function. The result of this: 
+Above, the payload first creates an object from the `classLoader` class from `ProtectionDomain`. Then, a list of class URLs is obtained and a tampered list is created by adding the URL to the JAR file which is in a blob storage. I then create a new `classLoader` using the tampered URL list and proceed to load the `JavaCurl` class which will then be used to call the `getMetadataCredentialsARM()` function. The result of this: 
 
 <p align="center"> <img src="/assets/images/Hack3.png"> </p>
 
@@ -266,9 +266,9 @@ On top of the previous set recommendations, perhaps the most critical mitigation
 
 
 # <a name="examples"></a>Running the Examples & Final Thoughts
-For the AWS and Azure examples above, I have created snippets in Pulumi that allow you to deploy the services and try out the attack paths we mentioned in here. For Google Cloud, as mentioned above, I have used the code in [https://github.com/matti/google-cloud-run-shell](https://github.com/matti/google-cloud-run-shell). To make it simple to access all the examples, I have compiled all the sources as a new repository in [https://github.com/macagr/cloud-metadata-endpoints-examples](https://github.com/macagr/cloud-metadata-endpoints-examples).  
+For the AWS and Azure examples above, I have created snippets in Pulumi that allow you to deploy the services and try out the attack paths I mentioned in here. For Google Cloud, as mentioned above, I have used the code in [https://github.com/matti/google-cloud-run-shell](https://github.com/matti/google-cloud-run-shell). To make it simple to access all the examples, I have compiled all the sources as a new repository in [https://github.com/macagr/cloud-metadata-endpoints-examples](https://github.com/macagr/cloud-metadata-endpoints-examples).  
 
-When we started creating this post, My intention was to go in detail as to how different cloud providers treated the metadata in the case of container services and how realistic attack vectors could be use to attack them. I did not realize how much of a monumental task it would be to attempt to completely cover all the topics in a short amount of text. 
+When I started creating this post, my intention was to go in detail as to how different cloud providers treated the metadata in the case of container services and how realistic attack vectors could be use to attack them. I did not realize how much of a monumental task it would be to attempt to completely cover all the topics in a short amount of text. 
 
 That being said, it has been really interesting to compile these findings, especially for Google Cloud. In the future I will revisit each of the cases presented in here and go more into detail (on separate posts) for this type of exploitation. 
 
