@@ -2,7 +2,7 @@
 layout: post
 title: Playing with Metadata Endpoints
 author: RandomByte
-date: 22-05-2022
+date: 01-09-2022
 ---
 
 In this blog post I will present how metadata endpoints can be used by attackers to obtain credentials in three different cloud service providers: AWS, Azure, and GCP. That being said, I thought it would be interesting to show this as realistically as possible. Therefore, I will be using a very simple attack chain starting from a vulnerable web application within the container. In the first section, I will give brief explanations of some of the attacking techniques I will be using. If you already know them, feel free to skip the section and go here. The table of contents is below:
