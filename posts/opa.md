@@ -23,7 +23,7 @@ Because ultimately, tools like OPA do not just help us write safer code, they al
 
 
 - [What is a Policy, Really?](#policydef)
-- [Enter OPA](#opa)
+- [Enter, OPA](#opa)
 
 
 	- [Server-Side Request Forgeries](#ssrf)
@@ -66,9 +66,34 @@ The central thesis of this blog is simple:
 > As long as a policy can be expressed as a decision problem (that is, a yes or no question) and the necessary data is available in a JSON-readable format, that policy can be codified and enforced.
 
 
-# <a name="opa"></a>Enter OPA?
+# <a name="opa"></a>Enter, OPA
 
-This is where OPA comes into play. It provides a consistent programmable layer for evaluating those yes-or-no decisions across your stack. 
+This is where OPA comes into play. It provides a consistent programmable layer for evaluating those yes-or-no decisions across your stack. The language that OPA understand is called **Rego** and to understand why I am so excited about policy engines, we need to speak about Rego and **logic programming.** At heart, I have always been into the theory of programming languages, so I came in contact with languages like Prolog, Datalog, Haskell, and OCaml early in my career. 
 
+It was not the fact that I was in love with theory (and still am), and focused on finishing my academic career with a PhD. What I found so striking and appealing is that all of these languages provided tools to model problems that "common" programming languages (think C++, Java, etc.) made a bit hard to do (they required very complex for/while loops or use bloated operations and libraries.) 
+
+A simple example would be the problem: "Let's calculate the sum of the even numbers in a list." 
+
+In C++, you would have to do something like:
+
+```c++
+long sumSquaresOfEvens(const std::vector<int>& xs) {
+    long acc = 0;
+    for (long x : xs) {                
+        if ((x & 1) == 0) {
+            acc += x * x;
+        }
+    }
+    return acc;
+}
+
+```
+
+Which means you need to keep track (manually) of an accumulator and additional variables, which may complicate things. This code works, but it is not as easy to read (nor maintain). Haskell, on the other hand, would write the operation as: 
+
+```haskell
+sumSquaresOfEvens :: Integral a => [a] -> a
+sumSquaresOfEvens = sum . map (^2) . filter even
+```
 
 
