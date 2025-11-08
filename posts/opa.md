@@ -96,4 +96,5 @@ sumSquaresOfEvens :: Integral a => [a] -> a
 sumSquaresOfEvens = sum . map (^2) . filter even
 ```
 
+In just two lines, haskell says that the function S
 
