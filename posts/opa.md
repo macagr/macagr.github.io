@@ -22,22 +22,9 @@ In this blog I will try to dig into the concepts of **policy**, **policy engine*
 Because ultimately, tools like OPA do not just help us write safer code, they also can help organizations to codify their own internal requirements, ensuring trust.
 
 
-- [What is a Policy, Really?](#policydef)
-- [Enter, OPA](#opa)
-
-
-	- [Server-Side Request Forgeries](#ssrf)
-	- [Server-Side Template Injections](#ssti)
-- [Targeting the IAM Role of a Fargate Container](#aws)
-	- [The Attack](#awsattack)
-	- [Mitigation](#awsmitigation)
-- [Targeting the Managed Identity of an Azure container](#azure)
-	- [The Attack](#azureattack)
-	- [Mitigation](#azuremitigation)
-- [Targeting the Service Identity of a Cloud Run Container](#gcp)
-	- [The Attack](#gcpattack)
-	- [Mitigation](#gcpmitigation)
-- [Running the Examples & Final Thoughts](#examples)
+- [What is a Policy, Really?](#what-is-a-policy-really)
+- [Enter, OPA](#enter-opa)
+- [From Logic to Policy: How OPA Evaluates Decisions](#from-logic-to-policy-how-opa-evaluates-decisions)
 
 # <a name="policydef"></a>What is a Policy, Really?
 
@@ -68,15 +55,21 @@ The central thesis of this blog is simple:
 
 # <a name="opa"></a>Enter, OPA
 
-This is where OPA comes into play. It provides a consistent programmable layer for evaluating those yes-or-no decisions across your stack. The language that OPA understand is called **Rego** and to understand why I am so excited about policy engines, we need to speak about Rego and **logic programming.** At heart, I have always been into the theory of programming languages, so I came in contact with languages like Prolog, Datalog, Haskell, and OCaml early in my career. 
+This is where OPA comes in: it gives you a consistent, programmable layer to evaluate yes-or-no decisions across your stack. 
 
-It was not the fact that I was in love with theory (and still am), and focused on finishing my academic career with a PhD. What I found so striking and appealing is that all of these languages provided tools to model problems that "common" programming languages (think C++, Java, etc.) made a bit hard to do (they required very complex for/while loops or use bloated operations and libraries.) 
+OPA’s policy language is called Rego, and to explain why policy engines are exciting, we need to talk briefly about *declarative programming*. 
 
-A simple example would be the problem: "Let's calculate the sum of the even numbers in a list." 
+I’ve always loved programming language theory, so I met Prolog, Datalog, Haskell, and OCaml early in my career. All of these languages are declarative. That is, the programmer declares the programmer describes what they want, not how to do it. The operational details (loops, state, control flow) are left to the compiler or runtime. In contrast, *imperative* (or operational) languages like C++, Java, or Python require step-by-step instructions to achieve the same outcome.
 
-In C++, you would have to do something like:
+It is not just an academic distinction. Declarative languages let you model problems that “common” imperative or OOP languages often make awkward by needing hand-rolled loops, mutable state, or heavy utility libraries.
+
+Take a simple example: *calculate the sum of the squares of the even numbers in a list*.
+
+
+In C++:
 
 ```c++
+//cpp
 long sumSquaresOfEvens(const std::vector<int>& xs) {
     long acc = 0;
     for (long x : xs) {                
@@ -89,12 +82,24 @@ long sumSquaresOfEvens(const std::vector<int>& xs) {
 
 ```
 
-Which means you need to keep track (manually) of an accumulator and additional variables, which may complicate things. This code works, but it is not as easy to read (nor maintain). Haskell, on the other hand, would write the operation as: 
+This works, but you are manually maintaining an accumulator, branching, and being careful about types. 
+
+In a declarative language like haskell:
 
 ```haskell
-sumSquaresOfEvens :: Integral a => [a] -> a
+sumSquaresOfEvens :: Integral a => [a] -> a // function constrained to Integrals.  
 sumSquaresOfEvens = sum . map (^2) . filter even
 ```
 
-In just two lines, haskell says that the function S
+In a single line, you describe the transformation: keep evens, square them, sum. The compiler takes care of how that happens.
 
+That is the beauty of the declarative style: you express intent, not mechanics.
+
+From there, we reach *logic programming*, where programs are built from logical statements. Think conjunctions, implications, and negations. The program execution then becomes a process of inference.
+
+In Rego (which is based on Datalog), this logic is expressed through [Horn clauses](https://en.wikipedia.org/wiki/Horn_clause): rules that specify the conditions under which a statement holds true. The inference engine (i.e., the OPA binary) queries the data against these clauses. If the data satisfies the rules, the policy permits; otherwise, it denies.
+
+My intent isn’t to go down the rabbit hole of programming paradigms, but if you’re curious about the internals of Rego regarding programming paradigm, [this Snyk blog post](https://snyk.io/articles/getting-started-with-practical-rego/) offers an excellent deep dive.
+
+
+# <a name="policyopa"></a>From Logic to Policy: How OPA Evaluates Decisions
