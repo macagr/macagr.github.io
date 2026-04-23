@@ -4,7 +4,7 @@ lang: en
 timezone: UTC
 
 title: RandomByte
-tagline: A security researcher's notes on offensive cloud, containers, and policy.
+tagline: Notes on offensive cloud, containers, and policy.
 description: >-
   Personal blog of RandomByte — cloud security, offensive research,
   container exploitation, and policy-as-code.
@@ -26,7 +26,29 @@ theme_mode: dark
 avatar: /assets/images/bullet.png
 
 toc: true
+
+pwa:
+  enabled: true
+  cache:
+    enabled: true
+
 paginate: 10
+
+kramdown:
+  footnote_backlink: "&#8617;&#xfe0e;"
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: highlight
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+      start_line: 1
+
+collections:
+  tabs:
+    output: true
+    sort_by: order
 
 defaults:
   - scope:
@@ -38,13 +60,27 @@ defaults:
       toc: true
       permalink: /posts/:title/
   - scope:
-      path: assets/img/favicons
+      path: _drafts
     values:
-      swcache: true
+      comments: false
   - scope:
-      path: assets/js/dist
+      path: ""
+      type: tabs
     values:
-      swcache: true
+      layout: page
+      permalink: /:title/
+
+sass:
+  style: compressed
+
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  profile: false
+  blanklines: false
+  ignore:
+    envs: [development]
 
 exclude:
   - "*.gem"
@@ -54,7 +90,7 @@ exclude:
   - README.md
   - LICENSE
   - "*.config.js"
-  - package*.json
+  - "package*.json"
 
 jekyll-archives:
   enabled: [categories, tags]
