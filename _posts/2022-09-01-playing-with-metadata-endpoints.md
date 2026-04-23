@@ -1,8 +1,11 @@
 ---
-layout: post
-title: Playing with Metadata Endpoints
-author: RandomByte
-date: 01-09-2022
+title: "Playing with Metadata Endpoints"
+date: 2022-09-01 12:00:00 +0000
+categories: [Cloud Security, Containers]
+tags: [aws, azure, gcp, ssrf, ssti, metadata, container-security, pentesting]
+image:
+  path: /assets/images/containers.png
+  alt: Attacking container metadata endpoints across AWS, Azure, and GCP
 ---
 
 In this blog post I will present how metadata endpoints can be used by attackers to obtain credentials in three different cloud service providers: AWS, Azure, and GCP. That being said, I thought it would be interesting to show this as realistically as possible. Therefore, I will be using a very simple attack chain starting from a vulnerable web application within the container. In the first section, I will give brief explanations of some of the attacking techniques I will be using. If you already know them, feel free to skip the section and go here. The table of contents is below:

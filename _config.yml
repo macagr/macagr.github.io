@@ -1,14 +1,66 @@
-title: RandomByte's Security Journey
-description: A personal journey into cybersecurity
-show_downloads: true
-google_analytics:
-#remote_theme: "dracula/gh-pages"
-show_header: true
-blog: /posts/
+theme: jekyll-theme-chirpy
+
+lang: en
+timezone: UTC
+
+title: RandomByte
+tagline: A security researcher's notes on offensive cloud, containers, and policy.
+description: >-
+  Personal blog of RandomByte — cloud security, offensive research,
+  container exploitation, and policy-as-code.
+
+url: "https://macagr.github.io"
+baseurl: ""
+
 github:
-    owner_url: https://github.com/macagr
-    owner_name: RandomByte
+  username: macagr
+
 social:
-    github: https://github.com/macagr
-sass:
-    style: compressed
+  name: RandomByte
+  email: ""
+  links:
+    - https://github.com/macagr
+
+theme_mode: dark
+
+avatar: /assets/images/bullet.png
+
+toc: true
+paginate: 10
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      comments: false
+      toc: true
+      permalink: /posts/:title/
+  - scope:
+      path: assets/img/favicons
+    values:
+      swcache: true
+  - scope:
+      path: assets/js/dist
+    values:
+      swcache: true
+
+exclude:
+  - "*.gem"
+  - "*.gemspec"
+  - docs
+  - tools
+  - README.md
+  - LICENSE
+  - "*.config.js"
+  - package*.json
+
+jekyll-archives:
+  enabled: [categories, tags]
+  layouts:
+    category: category
+    tag: tag
+  permalinks:
+    tag: /tags/:name/
+    category: /categories/:name/

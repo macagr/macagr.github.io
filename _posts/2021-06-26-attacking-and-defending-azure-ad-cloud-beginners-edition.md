@@ -1,8 +1,11 @@
 ---
-layout: post
-title: Attacking and Defending Azure AD Cloud - Beginner's edition
-author: RandomByte
-date: 26-06-2021
+title: "Attacking and Defending Azure AD Cloud: Beginner's Edition"
+date: 2021-06-26 12:00:00 +0000
+categories: [Cloud Security, Azure]
+tags: [azure, azure-ad, red-team, cartp, certifications, pentesting]
+image:
+  path: /assets/images/CARTP.png
+  alt: CARTP certification journey
 ---
 
 A month ago, I decided to take the "Attacking and Defending Azure AD Cloud: Beginner's Edition" bootcamp by [Pentester Academy](https://bootcamps.pentesteracademy.com/course/ad-azure-jun-21). While I have participated in some web app penetration tests and assessed other technologies (Kubernetes, Azure DevOps, etc), I never had the chance to delve into proper red teaming. Therefore, this course gave me a first test of what red teaming feels like and it was a very interesting experience. This post will be divided in two parts, each having their own sections: 

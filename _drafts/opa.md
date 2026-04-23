@@ -1,8 +1,11 @@
 ---
-layout: post
-title: Open Policy Agent (Highlighting the Policy Bit)
-author: RandomByte
-date: 07-11-2025
+title: "Open Policy Agent: Highlighting the Policy Bit"
+date: 2025-11-07 12:00:00 +0000
+categories: [Policy as Code, DevSecOps]
+tags: [opa, rego, policy-as-code, compliance, governance]
+image:
+  path: /assets/images/opa_arch.svg
+  alt: Open Policy Agent architecture overview
 ---
 
 It is a bit crazy how long it can take me to siot down and write these blogs (it's been almost 4 years). I will spare you the promises of writing more often (though, truth to be told, I *do want* to start writing more regularly). With that out of the way, let us dig in! 
