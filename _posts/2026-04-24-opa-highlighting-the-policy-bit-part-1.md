@@ -1,6 +1,6 @@
 ---
 title: "Open Policy Agent: Highlighting the Policy Bit (Part 1)"
-date: 2026-04-24 12:00:00 +0000
+date: 2026-04-24 00:00:00 +0000
 categories: [Policy as Code, DevSecOps]
 tags: [opa, rego, policy-as-code, compliance, governance]
 math: true
