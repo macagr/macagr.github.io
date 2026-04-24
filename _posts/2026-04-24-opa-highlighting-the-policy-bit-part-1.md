@@ -5,8 +5,8 @@ categories: [Policy as Code, DevSecOps]
 tags: [opa, rego, policy-as-code, compliance, governance]
 math: true
 image:
-  path: /assets/images/opa_arch.svg
-  alt: Open Policy Agent architecture overview
+  path: /assets/images/OPA_logo.png
+  alt: Open Policy Agent logo
 ---
 
 It is a bit crazy how long it can take me to sit down and write these blogs (it's been 4 years). I will spare you the promises of writing more often (though, truth to be told, I *do want* to start writing more regularly). This is the first part of a series that talks about Open Policy Agent. With that out of the way, let us dig in! 
